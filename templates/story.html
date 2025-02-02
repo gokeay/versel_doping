@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1>Günün Hikayesi</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p class="lead">{{ story }}</p>
+    </div>
+</div>
+
+<div class="text-center">
+    <form action="{{ url_for('summary') }}" method="get">
+        {% for word in words %}
+        <input type="hidden" name="words" value="{{ word }}">
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Günü Tamamla</button>
+    </form>
+</div>
+{% endblock %} 

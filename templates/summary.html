@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Günün Özeti</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Bugün öğrendiğiniz kelimeler:</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <ul class="list-group list-group-flush mb-4">
+                        {% for word in words %}
+                        <li class="list-group-item">{{ word }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <p class="text-muted">Tebrikler! Bugünkü kelime öğrenme hedefini tamamladınız.</p>
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('quiz') }}" class="btn btn-primary">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Bilgini Test Et
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.list-group-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    border-left-color: #4a90e2;
+    transform: translateX(5px);
+}
+
+.btn-primary {
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+</style>
+{% endblock %} 

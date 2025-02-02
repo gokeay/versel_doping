@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+.result-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.score-card {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    color: white;
+    margin-bottom: 3rem;
+    text-align: center;
+    box-shadow: 0 4px 25px rgba(74, 144, 226, 0.2);
+}
+
+.score-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.score-number {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.score-details {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.question-result {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.question-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.question-number {
+    background: #4a90e2;
+    color: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 1rem;
+    font-weight: bold;
+}
+
+.question-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #2d3748;
+    flex-grow: 1;
+}
+
+.option {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.option.correct {
+    background: #c6f6d5;
+    border: 1px solid #9ae6b4;
+    color: #276749;
+}
+
+.option.incorrect {
+    background: #fed7d7;
+    border: 1px solid #feb2b2;
+    color: #9b2c2c;
+}
+
+.option.neutral {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #4a5568;
+}
+
+.option-letter {
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.result-icon {
+    margin-left: auto;
+    font-size: 1.2rem;
+}
+
+.explanation {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 10px;
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.explanation-title {
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.next-button {
+    display: inline-block;
+    background: #4a90e2;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.next-button:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+.performance-message {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    color: #4a5568;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-container animate__animated animate__fadeIn">
+    <div class="score-card">
+        <div class="score-title">Quiz Sonucunuz</div>
+        <div class="score-number">{{ "%.0f"|format(score_percentage) }}%</div>
+        <div class="score-details">
+            {{ total_correct }} doğru / {{ total_questions }} soru
+        </div>
+    </div>
+
+    <div class="performance-message">
+        {% if score_percentage == 100 %}
+            🎉 Mükemmel! Tüm soruları doğru yanıtladınız!
+        {% elif score_percentage >= 75 %}
+            👏 Çok iyi! Harika bir performans gösterdiniz!
+        {% elif score_percentage >= 50 %}
+            👍 İyi! Biraz daha pratik yaparak daha da gelişebilirsiniz.
+        {% else %}
+            💪 Bu kelimeleri biraz daha çalışmanız gerekiyor.
+        {% endif %}
+    </div>
+
+    {% for result in results %}
+    <div class="question-result">
+        <div class="question-header">
+            <div class="question-number">{{ loop.index }}</div>
+            <div class="question-text">{{ result.question }}</div>
+        </div>
+
+        {% for letter, text in result.options.items() %}
+        <div class="option 
+            {{- ' correct' if letter == result.correct_answer -}}
+            {{- ' incorrect' if letter == result.user_answer and letter != result.correct_answer -}}
+            {{- ' neutral' if letter != result.user_answer and letter != result.correct_answer -}}">
+            <span class="option-letter">{{ letter }})</span>
+            {{ text }}
+            {% if letter == result.correct_answer %}
+            <span class="result-icon">✓</span>
+            {% elif letter == result.user_answer and letter != result.correct_answer %}
+            <span class="result-icon">✗</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="explanation">
+            <div class="explanation-title">Açıklama:</div>
+            {{ result.explanation }}
+        </div>
+    </div>
+    {% endfor %}
+
+    <a href="{{ url_for('home') }}" class="next-button">
+        Yeni Güne Başla
+    </a>
+</div>
+{% endblock %} 

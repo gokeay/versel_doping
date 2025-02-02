@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Günün Kelimeleri</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Bugün öğreneceğiniz 10 kelime:</h5>
+                    <ul class="list-group list-group-flush mb-4">
+                        {% for word in words %}
+                        <li class="list-group-item">{{ word }}</li>
+                        {% endfor %}
+                    </ul>
+                    <form action="{{ url_for('learn') }}" method="get">
+                        {% for word in words %}
+                        <input type="hidden" name="words" value="{{ word }}">
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">Haydi Başla!</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

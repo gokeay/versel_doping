@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stats-container {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    color: white;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 25px rgba(74, 144, 226, 0.2);
+}
+
+.stat-card {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
+
+.timeline-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+}
+
+.filter-section {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filter-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.filter-button.active {
+    background: #4a90e2;
+    color: white;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.day-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #eef2f7;
+}
+
+.day-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.day-header {
+    background: #f8f9fa;
+    padding: 1.2rem;
+    border-bottom: 1px solid #eef2f7;
+    position: relative;
+}
+
+.day-number {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+.completion-date {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 0.3rem;
+}
+
+.word-badges-container {
+    padding: 1.5rem;
+    background: #ffffff;
+}
+
+.word-badge {
+    display: inline-block;
+    font-size: 0.9rem;
+    margin: 0.3rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef;
+}
+
+.word-badge:hover {
+    background-color: #4a90e2;
+    color: white;
+    transform: scale(1.05);
+}
+
+.progress-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: conic-gradient(#4a90e2 var(--progress), #f1f1f1 var(--progress));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #4a90e2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.action-button {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid #4a90e2;
+    background: transparent;
+    color: #4a90e2;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.action-button:hover {
+    background: #4a90e2;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+.completed-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #28a745;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 5px rgba(40, 167, 69, 0.2);
+}
+
+.current-day {
+    border: 2px solid #4a90e2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 144, 226, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0); }
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2d3748;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.page-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 4px;
+    background: #4a90e2;
+    margin: 1rem auto;
+    border-radius: 2px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container animate__animated animate__fadeIn">
+    <h1 class="page-title">Öğrenme Yolculuğum</h1>
+    
+    <!-- İstatistikler -->
+    <div class="stats-container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ progress_list|length }}</div>
+                    <div class="stat-label">TOPLAM GÜN</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ progress_list|selectattr('completed')|list|length }}</div>
+                    <div class="stat-label">TAMAMLANAN GÜN</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ (progress_list|selectattr('completed')|list|length * 10) }}</div>
+                    <div class="stat-label">ÖĞRENİLEN KELİME</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtreler -->
+    <div class="filter-section">
+        <div class="filter-buttons">
+            <button class="filter-button active" data-filter="all">
+                <i class="fas fa-th-large me-2"></i>Tüm Günler
+            </button>
+            <button class="filter-button" data-filter="completed">
+                <i class="fas fa-check-circle me-2"></i>Tamamlananlar
+            </button>
+            <button class="filter-button" data-filter="ongoing">
+                <i class="fas fa-clock me-2"></i>Devam Edenler
+            </button>
+        </div>
+    </div>
+    
+    <!-- Günler -->
+    <div class="timeline-container">
+        <div class="days-grid">
+            {% for progress in progress_list %}
+            <div class="day-item {{ 'completed' if progress.completed else 'ongoing' }}">
+                <div class="day-card {% if progress.day == current_user.current_day %}current-day{% endif %}">
+                    <div class="day-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="day-number">Gün {{ progress.day }}</div>
+                                {% if progress.completed %}
+                                <div class="completion-date">
+                                    {{ progress.date_completed.strftime('%d.%m.%Y') }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                        {% if progress.completed %}
+                            <span class="completed-badge">
+                                <i class="fas fa-check me-1"></i>Tamamlandı
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="word-badges-container">
+                        {% for word in progress.word_list %}
+                            <span class="word-badge">{{ word }}</span>
+                        {% endfor %}
+                        <form action="{{ url_for('learn') }}" method="get">
+                            {% for word in progress.word_list %}
+                            <input type="hidden" name="words" value="{{ word }}">
+                            {% endfor %}
+                            <button type="submit" class="action-button">
+                                <i class="fas {{ 'fa-redo' if progress.completed else 'fa-play' }} me-2"></i>
+                                {{ 'Tekrar Et' if progress.completed else 'Devam Et' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-button');
+    const dayItems = document.querySelectorAll('.day-item');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.dataset.filter;
+            dayItems.forEach(item => {
+                if (filter === 'all') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = item.classList.contains(filter) ? 'block' : 'none';
+                }
+            });
+        });
+    });
+
+    const dayCards = document.querySelectorAll('.day-card');
+    dayCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.classList.add('animate__animated', 'animate__pulse');
+        });
+        card.addEventListener('mouseleave', function() {
+            this.classList.remove('animate__animated', 'animate__pulse');
+        });
+    });
+});
+</script>
+{% endblock %} 

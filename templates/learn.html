@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1>Kelimeleri Öğrenelim</h1>
+</div>
+
+{% for detail in word_details %}
+<div class="word-card">
+    <h2 class="text-center mb-4 text-primary">{{ detail.word }}</h2>
+    
+    {% for meaning in detail.meanings %}
+    <div class="meaning-section mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="meaning-content p-4 border-start border-4 border-primary bg-light rounded">
+                    <h4 class="text-primary mb-3">{{ meaning.order }}. Anlam:</h4>
+                    <p class="fw-bold mb-3 fs-5">{{ meaning.definition }}</p>
+                    <div class="example-sentence bg-white p-3 rounded shadow-sm">
+                        <p class="fst-italic text-muted mb-0">
+                            <span class="fw-bold text-dark">Örnek Cümle:</span><br>
+                            {{ meaning.example }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="image-container p-2 bg-white rounded shadow-sm">
+                    <img src="data:image/png;base64,{{ meaning.image }}" 
+                         alt="{{ detail.word }} - {{ meaning.order }}. anlam" 
+                         class="word-image rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if not loop.last %}
+    <hr class="my-4">
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% if not loop.last %}
+<div class="word-separator my-5">
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="separator-line flex-grow-1 border-bottom border-2"></div>
+        <div class="separator-icon mx-4">
+            <span class="badge bg-primary p-3 rounded-circle">
+                <i class="fas fa-book"></i>
+            </span>
+        </div>
+        <div class="separator-line flex-grow-1 border-bottom border-2"></div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="text-center mt-5">
+    <form action="{{ url_for('story') }}" method="get">
+        {% for detail in word_details %}
+        <input type="hidden" name="words" value="{{ detail.word }}">
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-lg">Hikayeye Başla</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+.word-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.meaning-content {
+    transition: all 0.3s ease;
+}
+
+.meaning-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.image-container {
+    transition: all 0.3s ease;
+}
+
+.image-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.separator-line {
+    height: 2px;
+    background: linear-gradient(to right, transparent, #4a90e2, transparent);
+}
+
+.word-separator {
+    opacity: 0.7;
+}
+</style>
+{% endblock %} 
